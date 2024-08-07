@@ -1,3 +1,3 @@
 # AdventofCode
 
-My solutions to advent of code puzzles, along with some puzzle inputs
+My solutions to some dvent of code puzzles
