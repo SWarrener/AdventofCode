@@ -6,29 +6,30 @@ def ProgressLight(grid, beams):
     while beams:
         # each beam: [direction of travel, current position]
         beam = beams.pop(0)
-        next = AddList(beam[0], beam[1])
+        direction = beam[0]
+        next = AddList(direction, beam[1])
         if next[0]<0 or next[0]>=len(grid) or next[1]<0 or next[1]>=len(grid): #Grid is a square
             continue
-        if (tuple(next), tuple(beam[0])) not in visited:
-            visited.add((tuple(next), tuple(beam[0])))
+        if (tuple(next), tuple(direction)) not in visited:
+            visited.add((tuple(next), tuple(direction)))
         else: continue
         beam[1] = next
         next_char = grid[next[0]][next[1]]
         if next_char == ".":
-            beams.append([beam[0], next])
+            beams.append([direction, next])
         elif next_char == "\\": #'\'
-            beams.append([[beam[0][1], beam[0][0]], next])
+            beams.append([[direction[1], direction[0]], next])
         elif next_char == "/":
-            beams.append([[beam[0][1]*-1, beam[0][0]*-1], next])
+            beams.append([[direction[1]*-1, direction[0]*-1], next])
         elif next_char == "-":
-            if beam[0][0] == 0: 
-                beams.append([beam[0], next])
+            if direction[0] == 0: 
+                beams.append([direction, next])
             else:
                 beams.append([[0,1], next])
                 beams.append([[0,-1], next])
         elif next_char == "|":
-            if beam[0][1] == 0: 
-                beams.append([beam[0], next])
+            if direction[1] == 0: 
+                beams.append([direction, next])
             else: 
                 beams.append([[-1,0], next])
                 beams.append([[1,0], next])
