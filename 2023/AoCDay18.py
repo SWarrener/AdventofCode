@@ -17,7 +17,7 @@ def CreateCoordinates(instructions):
 def ComputeArea(coords):
     pgon = Polygon(coords)
     # We aren't looking for the area, but number of points including the boundaries.
-    # So we need to use this formula instead of simply using the boundaries
+    # So we need to use this formula instead of simply using the area
     return int(pgon.area + pgon.length/2 + 1)
 
 with open("input18.txt") as f:
