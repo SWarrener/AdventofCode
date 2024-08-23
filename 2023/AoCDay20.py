@@ -66,20 +66,18 @@ def ProcessModules(modules):
 with open("input20.txt") as f:
     modules = {}
     for line in f.readlines():
+        destination = line[line.find(">")+1:].strip().replace(" ", "").split(",")
         if line[0] == "%":            
             name = line[line.find("%")+1:line.find(" ")]
             temp_type = "F"
-            destination = line[line.find(">")+1:].strip().replace(" ", "").split(",")
             status = False #  Off, True would be On 
         elif line[0] == "&":
             name = line[line.find("&")+1:line.find(" ")]
             temp_type = "C"
-            destination = line[line.find(">")+1:].strip().replace(" ", "").split(",")
             status = {}
         elif line[0] == "b":
             name = line[:line.find(" ")]
             temp_type = "B"
-            destination = line[line.find(">")+1:].strip().replace(" ", "").split(",")
             status = "low"
         modules[name] = {"type": temp_type, "destination":destination, "status":status}
 
