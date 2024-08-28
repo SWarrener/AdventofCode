@@ -44,8 +44,6 @@ print(f"The answer to part 1 is: {p1answer}")
 # reachable in 65, 65+131, and 65+131+131 steps.
 
 points = [(i, pathfind(grid, start, 65 + (i * len(grid)))) for i in range(3)]
-print(points)
-
 p2answer = interpolate_quadratic_equation(points, int(26501365/len(grid)))
 
 print(f"The asnwer to part 2 is: {p2answer}")
