@@ -1,150 +1,73 @@
-#My part 2 fails, see further below for something from online. 
+#https://adventofcode.com/2023/day/5
 
-def findLocationNumber(targetnum):
-    keys = maps.keys()
-    
-    for key in keys:
+# Take a number, run it through the maps. The if statement finds the correct
+# set of numbers, and then we calculate the destination number. If the target num is
+# equal to itself in this map then it is unchanged by the second for loop.
+def find_location_number(targetnum):
+    for key in maps.keys():
         for set in maps[key]:
-            source = int(set[1])
-            dest = int(set[0])
-            modifier = int(set[2])
-            if targetnum >= source and targetnum <= source + modifier:
+            dest, source, modifier = set
+            if source <= targetnum < source + modifier:
                 targetnum = dest + (targetnum-source)
                 break
-
     return targetnum
 
-def findLocationRanges(ranges, key):
-    locationranges = []
-    for range in ranges:
-        highdealt = range[1]
-        lowdealt = range[0]
-        for set in maps[key]:
-            source = int(set[1])
-            dest = int(set[0])
-            modifier = int(set[2])
-            low = range[0]
-            high = range[1]
-            if low >= source and high <= source+modifier:
-                locationranges.append([dest + (low-source), dest + (high-source)])
-                highdealt = 0
-                lowdealt = 0
-                break
-            elif (low >= source and low <= source+modifier) and high >= source+modifier:
-                locationranges.append([dest + (low-source), dest + modifier])
-                lowdealt = source+modifier+1
-                continue
-            elif low <= source and (high <= source+modifier and high >= source):
-                locationranges.append([dest, dest + (high-source)])
-                highdealt = source-1
-                continue
-        if highdealt != lowdealt:
-            locationranges.append([lowdealt, highdealt])
-    return locationranges
+# Take the current ranges and run them through one map. Each range must have one of 5
+# relationships with the maps. The range must either fully enlocse, be fully enclosed by,
+# or have overlap at the top or bottom, or have no overlap with a set. We find which relationship
+# is applicable and map the numbers accordingly, adding the leftover bit of the range 
+# back into the original loop if applicable.
+def find_location_ranges(ranges, key):
+   locationranges = []
+   for range in ranges:
+      start, end = range
+      added = False   
+      for set in maps[key]:
+         dest, source, modifier = set
+         source_end = source + modifier
+         if start >= source and end < source_end:
+            locationranges.append((start - source + dest, end - source + dest))
+            added = True
+         elif start < source_end <= end and source < start:
+            locationranges.append((start - source + dest, source_end - source + dest))
+            ranges.append((source_end, end))
+            added = True
+         elif source >= start and source_end < end:
+            locationranges.append((dest, source_end - source + dest))
+            added = True
+         elif start < source <= end and source_end > end:
+            locationranges.append((dest, end - source + dest))
+            ranges.append((start, source-1))
+            added = True
+      if not added:
+         locationranges.append((start, end))
+   return locationranges
 
+# Open the file and extract a list containing the seeds, and a
+# dictionary containing a list of tuples for each map, where each
+# tuple is a line of three digits from the input. 
 with open("input5.txt") as f:
-    seeds = []
     maps = {}
-    category = ""
     for line in f.readlines():
-        if line[:5] == "seeds":
-            seeds = line[7:-1].split(" ")
+        if "seeds" in line:
+            seeds = list(map(int, line[7:-1].split(" ")))
             continue
         if not line[0].isdigit() and line[0] != "\n":
             category = line[:line.find(" ")]
             maps[category] = []
         if line[0].isdigit():
-            nums = line[:-1].split(" ")
+            nums = tuple(map(int, line[:-1].split(" ")))
             maps[category].append(nums)
 
-lowestlocation = 10000000000
+# Run the function for p1 and print the answer
+p1answer = min(find_location_number(seed) for seed in seeds)
+print(f"The answer to part 1 is: {p1answer}")
 
-for seed in seeds:
-    location = findLocationNumber(int(seed))
-    lowestlocation = min(location, lowestlocation)
+# change the list of seeds to ranges, then run the function for p2 and print the answer
+ranges = [(seeds[i], seeds[i]+seeds[i+1]) for i in range(0, len(seeds), 2)]
 
-print(f"The answer to part 1 is: {lowestlocation}")
+for key in maps.keys():
+    ranges = find_location_ranges(ranges, key)
+p2answer = min(range[0] for range in ranges)
 
-ranges = [[int(seeds[i]), int(seeds[i])+int(seeds[i+1])] for i in range(0, len(seeds), 2)]
-
-keys = maps.keys()
-
-for key in keys:
-    ranges = findLocationRanges(ranges, key)
-
-lowestlocation = 10000000000
-
-for range in ranges:
-    lowestlocation = min(range[0], lowestlocation)
-
-print(f"The answer to part 2 is: {lowestlocation}")
-
-
-import sys
-import re
-from collections import defaultdict
-D = open("input5.txt").read().strip()
-L = D.split('\n')
-
-parts = D.split('\n\n')
-seed, *others = parts
-seed = [int(x) for x in seed.split(':')[1].split()]
-
-class Function:
-  def __init__(self, S):
-    lines = S.split('\n')[1:] # throw away name
-    # dst src sz
-    self.tuples: list[tuple[int,int,int]] = [[int(x) for x in line.split()] for line in lines]
-    #print(self.tuples)
-  def apply_one(self, x: int) -> int:
-    for (dst, src, sz) in self.tuples:
-      if src<=x<src+sz:
-        return x+dst-src
-    return x
-
-  # list of [start, end) ranges
-  def apply_range(self, R):
-    A = []
-    for (dest, src, sz) in self.tuples:
-      src_end = src+sz
-      NR = []
-      while R:
-        # [st                                     ed)
-        #          [src       src_end]
-        # [BEFORE ][INTER            ][AFTER        )
-        (st,ed) = R.pop()
-        # (src,sz) might cut (st,ed)
-        before = (st,min(ed,src))
-        inter = (max(st, src), min(src_end, ed))
-        after = (max(src_end, st), ed)
-        if before[1]>before[0]:
-          NR.append(before)
-        if inter[1]>inter[0]:
-          A.append((inter[0]-src+dest, inter[1]-src+dest))
-        if after[1]>after[0]:
-          NR.append(after)
-      R = NR
-    return A+R
-
-Fs = [Function(s) for s in others]
-
-P1 = []
-for x in seed:
-  for f in Fs:
-    x = f.apply_one(x)
-  P1.append(x)
-print(min(P1))
-
-P2 = []
-pairs = list(zip(seed[::2], seed[1::2]))
-for st, sz in pairs:
-  # inclusive on the left, exclusive on the right
-  # e.g. [1,3) = [1,2]
-  # length of [a,b) = b-a
-  # [a,b) + [b,c) = [a,c)
-  R = [(st, st+sz)]
-  for f in Fs:
-    R = f.apply_range(R)
-  #print(len(R))
-  P2.append(min(R)[0])
-print(min(P2))
+print(f"The answer to part 2 is: {p2answer}")

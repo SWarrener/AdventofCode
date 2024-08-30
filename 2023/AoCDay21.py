@@ -1,7 +1,7 @@
 import numpy as np
 
 # Basic pathfinding, starting from the middle and moving out, adding visited points to the
-# close list. Use modulus to simulate the infinite copies of the grid. Also use a modulus check
+# closed list. Use modulus to simulate the infinite copies of the grid. Also use a modulus check
 # to ensure that we only consider tiles that can be reached in an even or odd number of moves
 def pathfind(grid, start, step_count):
     reachable_plots = set()
