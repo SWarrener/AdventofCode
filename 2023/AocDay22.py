@@ -26,7 +26,7 @@ def fill_grid(grid, bricks):
 # position in the grid. Update the brick coords to its new position. 
 def drop_bricks(grid, bricks):
     bricks = dict(sorted(bricks.items(), key=lambda item: min(coord[2] for coord in item[1]["coords"])))
-    for k, brick in bricks.items():
+    for brick in bricks.values():
         coords = brick["coords"]
         new_coords = []
         if brick["end"][2] - brick["start"][2] == 0:
@@ -71,18 +71,36 @@ def find_support(grid, bricks):
 # For each brick see if the bricks it supports are supported by anything else. If they
 # are, or it supports no bricks, it can be safely disintegrated.
 def try_disintegration(bricks):
-    total = 0
+    safe_bricks = []
     for k, brick in bricks.items():
         if len(brick["supports"]) == 0:
-            total += 1
+            safe_bricks.append(k)
             continue
         else:
             eligible = True
             for key in brick["supports"]:
                 if len(bricks[key]["supported_by"]) <= 1:
                     eligible = False
-            if eligible: total += 1
-    return total
+            if eligible: safe_bricks.append(k)
+    return safe_bricks
+
+
+# Any brick which has all of its supports in the set will fall, any 1 support will stop it from falling
+def supports_intact(brick, set_):
+    if all([support in set_ for support in brick["supported_by"]]):
+        return False
+    return True
+
+
+# Recursively go up from the analysed brick, adding any brick that would fall to a set, and returning
+# the length of that set
+def find_supported_count(brick, set_):
+    for k in brick["supports"]:
+        if not supports_intact(bricks[k], set_):
+            set_.add(k)
+            find_supported_count(bricks[k], set_)
+    return len(set_) - 1
+
 
 # Generate a dictionary of bricks
 with open("input22.txt") as f:
@@ -109,5 +127,9 @@ drop_bricks(grid, bricks)
 
 find_support(grid, bricks)
 
-p1_answer = try_disintegration(bricks)
+safe_bricks = try_disintegration(bricks)
+p1_answer = len(safe_bricks)
 print(f"The answer to part 1 is: {p1_answer}")
+
+p2_answer = sum([find_supported_count(brick, {k}) for k, brick in bricks.items() if k not in safe_bricks])
+print(f"The answer to part 2 is: {p2_answer}")
