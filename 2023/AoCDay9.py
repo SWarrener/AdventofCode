@@ -39,17 +39,17 @@ def solvesequence2(matrix):
 
 # Get a list of numbers per line
 with open("input9.txt") as f:
-    inputs = []
+    data = []
     for line in f.readlines():
-        inputs.append([int(x) for x in line.strip().split(" ")])
+        data.append([int(x) for x in line.strip().split(" ")])
 
 
 # Use the above functions to caluclate the result, as we don't edit the inputs we can do both parts
 # to the puzzle in the same loop. Finally, print the answers
 p1answer = 0
 p2answer = 0
-for input in inputs:
-    matrix = creatematrix(input)
+for line in data:
+    matrix = creatematrix(line)
     p1answer += solvesequence1(matrix)
     p2answer += solvesequence2(matrix)
 

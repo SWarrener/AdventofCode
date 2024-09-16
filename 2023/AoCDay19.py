@@ -1,17 +1,18 @@
 from math import prod
 
 # Go through each test in the calculation. If it is true, return the next step
-# If not keep going until we hit the fallback. 
+# If not keep going until we hit the fallback.
 def TestWorkflow(part, workflow):
     for calc in workflow:
         if calc.find(":") == -1:
             return calc
-        elif calc.find("<") != -1:
+        if calc.find("<") != -1:
             if part[calc[0]] < int(calc[calc.find("<")+1:calc.find(":")]):
                 return calc[calc.find(":")+1:]
-        elif calc.find(">") != -1:
+        if calc.find(">") != -1:
             if part[calc[0]] > int(calc[calc.find(">")+1:calc.find(":")]):
                 return calc[calc.find(":")+1:]
+    return None
 
 # Take each part and test its current workflow. If it is allowed, add it to the
 # allowed list. If rejected do nothing with it. If it has a new workflow, then
@@ -47,7 +48,7 @@ def CalculateWorkflow(workflow, bounds):
         elif calc.find(">") != -1:
             cur_bound = calc[0] + "l"
             value = int(calc[calc.find(">")+1:calc.find(":")]) + 1
-            if value > bounds[cur_bound]: 
+            if value > bounds[cur_bound]:
                 temp_bounds[cur_bound] = value
             results.append((calc[calc.find(":")+1:], temp_bounds))
             cur_bound = calc[0] + "h"
@@ -86,8 +87,9 @@ with open("input19.txt") as f:
 allowed_parts = ProcessParts(parts, workflows)
 allowed_bounds = ProcessWorkflows(workflows)
 
-p1answer = sum([v for part in allowed_parts for v in part.values()])
-p2answer = sum([prod([v[i]-v[i-1]+1 for i in range(1,len(v),2) if v[i] > v[i-1]]) for v in [list(bound.values()) for bound in allowed_bounds]])
+p1answer = sum(v for part in allowed_parts for v in part.values())
+p2answer = sum(prod(v[i]-v[i-1]+1 for i in range(1,len(v),2) if v[i] > v[i-1])
+               for v in [list(bound.values()) for bound in allowed_bounds])
 
 print(f"The answer to part 1 is: {p1answer}")
 print(f"The answer to part 2 is: {p2answer}")
