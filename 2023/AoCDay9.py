@@ -1,8 +1,8 @@
 # https://adventofcode.com/2023/day/9
 
 # Create a list of lists, where each list is a sequence of differences between the numbers
-# in the sequence above it in the list. Exit and return the whole list of lists once we have 
-# a list consisting entirely of zeroes. 
+# in the sequence above it in the list. Exit and return the whole list of lists once we have
+# a list consisting entirely of zeroes.
 def creatematrix(sequence):
     matrix = [sequence]
     while sequence.count(0) != len(sequence):

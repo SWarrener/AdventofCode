@@ -3,7 +3,7 @@
 # For each millisecond see if we beat the record distance, once we do subtract twice the value
 # of the reach millisecond from the overall time. This + 1 is the number of milliseconds for which
 # the distance is beaten, as the distance reached for each timestamp can be imagined as a symmetrical
-# curve with its peak at time/2. 
+# curve with its peak at time/2.
 def solve_race(time, distance):
     wincounter = 0
     for timestep in range(0, int(time/2)):
@@ -23,10 +23,9 @@ with open("input6.txt") as f:
         elif line[0] == "D":
             distances = [int(x) for x in line[line.find(":")+1:].strip().split(" ") if x]
 
-
 p1answer = 1
-for i in range(0, len(times)):
-    p1answer *= solve_race(times[i], distances[i])
+for time, distance in zip(times, distances):
+    p1answer *= solve_race(time, distance)
 
 print(f"The answer to part 1 is: {p1answer}")
 

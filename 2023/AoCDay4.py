@@ -9,7 +9,7 @@ def createcopies(ori, num, copies):
             cards["Card"+str(new)][3] += 1*copies
 
 # A dictionary of cards ["Card1"] = [winning numbers, card numbers, num of matches, num of copies]
-# is extracted from the input. The filter is necessary due to extra spaces in the input. 
+# is extracted from the input. The filter is necessary due to extra spaces in the input.
 with open("input4.txt") as f:
     cards = {}
     for line in f.readlines():

@@ -31,7 +31,7 @@ def solve_p1(instructions, nodes):
 
 
 # Go through the list simultaneously for all start positions. Once we have step counts for all of
-# them to finish, use LCM to work out when they will all finish on the same step. 
+# them to finish, use LCM to work out when they will all finish on the same step.
 def solve_p2(instructions, nodes):
     steps = 0
     locations = [[node["name"], 0] for node in nodes.values() if node["name"].endswith("A")]
@@ -52,12 +52,13 @@ def solve_p2(instructions, nodes):
 
 # Extract two lists, one is the list of instructions and the other is a list of
 # dictionaries representing each node, with its name and a two item list of its
-# left and right target locations. 
+# left and right target locations.
 with open("input8.txt") as f:
     instructions = []
     nodes = {}
     for i, line in enumerate(f.readlines()):
-        if line == "\n": continue
+        if line == "\n":
+            continue
         if i == 0:
             instructions = list(line.strip())
         else:
