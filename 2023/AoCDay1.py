@@ -26,10 +26,8 @@ def process_p2(string):
     right_data = max((string.rfind(x), i) for i, x in enumerate(search_items) if string.rfind(x) != -1)
     digit_2 = search_items[right_data[1]]
 
-    if digit_2 in text_to_number:
-        digit_2 = text_to_number[digit_2]
-    if digit_1 in text_to_number:
-        digit_1 = text_to_number[digit_1]
+    digit_2 = text_to_number.get(digit_2, digit_2)
+    digit_1 = text_to_number.get(digit_1, digit_1)
 
     return int(digit_1 + digit_2)
 
