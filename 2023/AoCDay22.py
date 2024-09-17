@@ -16,21 +16,21 @@ def fill_grid(grid, bricks):
         for coords in brick["coords"]:
             x, y, z = coords
             grid[x][y][z] = 1
-    for x, _ in enumerate(grid):  #  Fill the bottom of the grid, aka the ground
-        for y, _ in enumerate(grid[x]):
+    for x in range(len(grid)):  #  Fill the bottom of the grid, aka the ground
+        for y in range(len(grid[x])):
             grid[x][y][0] = 1
 
 
 # Sort the bricks by lowest z value, lowest first. Then for each x, y value that brick operates find the
 # next occupied tile below that. The highest of these is where the brick will sit. Move the brick to that
-# position in the grid. Update the brick coords to its new position.
+# position in the grid. Update the brick coords to its new position. 
 def drop_bricks(grid, bricks):
     bricks = dict(sorted(bricks.items(), key=lambda item: min(coord[2] for coord in item[1]["coords"])))
     for brick in bricks.values():
         coords = brick["coords"]
         new_coords = []
         if brick["end"][2] - brick["start"][2] == 0:
-            resting_z = max((z - grid[x][y][:z][::-1].index(1)) for x, y, z in coords)
+            resting_z = max([(z - grid[x][y][:z][::-1].index(1)) for x, y, z in coords])
             for x, y, z in coords:
                 grid[x][y][z] = 0
                 grid[x][y][resting_z] = 1
@@ -52,18 +52,16 @@ def find_brick_by_coords(coords, bricks, supported_key):
             if supported_key not in brick["supported_by"]:
                 brick["supported_by"].append(supported_key)
             return k
-    return None
 
 
 # Find which bricks support other bricks by checking tiles directly above, use the information to
-# populate the supports field as well.
+# populate the supports field as well. 
 def find_support(grid, bricks):
     for k, brick in bricks.items():
         coords = brick["coords"]
         for x, y, z in coords:
             check_z = z + 1
-            if (x, y, check_z) in coords:
-                continue
+            if (x, y, check_z) in coords: continue
             if grid[x][y][check_z] == 1:
                 supports_key = find_brick_by_coords((x, y, check_z), bricks, k)
                 if supports_key not in brick["supports"]:
@@ -78,18 +76,18 @@ def try_disintegration(bricks):
         if len(brick["supports"]) == 0:
             safe_bricks.append(k)
             continue
-        eligible = True
-        for key in brick["supports"]:
-            if len(bricks[key]["supported_by"]) <= 1:
-                eligible = False
-        if eligible:
-            safe_bricks.append(k)
+        else:
+            eligible = True
+            for key in brick["supports"]:
+                if len(bricks[key]["supported_by"]) <= 1:
+                    eligible = False
+            if eligible: safe_bricks.append(k)
     return safe_bricks
 
 
 # Any brick which has all of its supports in the set will fall, any 1 support will stop it from falling
 def supports_intact(brick, set_):
-    if all(support in set_ for support in brick["supported_by"]):
+    if all([support in set_ for support in brick["supported_by"]]):
         return False
     return True
 
@@ -104,17 +102,12 @@ def find_supported_count(brick, set_):
     return len(set_) - 1
 
 
-# Find the maximum dimensions that the grid needs to be and create the grid
-def max_finder(x, list_):
-    return max(max(point[x] for point in sub) for sub in list_)
-
-
 # Generate a dictionary of bricks
 with open("input22.txt") as f:
     bricks = {}
     for i, line in enumerate(f.readlines()):
         start, end = tuple(line.strip().split("~"))
-        bricks[i] = {"start": tuple(map(int, start.split(","))),
+        bricks[i] = {"start": tuple(map(int, start.split(","))), 
                      "end" : tuple(map(int, end.split(","))),
                      "coords": [],
                      "supports": [],
@@ -122,8 +115,9 @@ with open("input22.txt") as f:
 
 fill_bricks(bricks)
 
-# Create the list of max coords and then the grid with max dimensions
-highest_coords = [max_finder(i, [k["coords"] for k in bricks.values()]) for i in range(3)]
+# Find the maximum dimensions that the grid needs to be and create the grid
+max_finder = lambda x, list_: max([max([point[x] for point in sub]) for sub in list_])
+highest_coords = [max_finder(i, [bricks[k]["coords"] for k in bricks.keys()]) for i in range(3)]
 
 grid = [[[0]*(highest_coords[2]+1) for _ in range(highest_coords[1]+1)] for _ in range(highest_coords[0]+1)]
 
@@ -137,5 +131,5 @@ safe_bricks = try_disintegration(bricks)
 p1_answer = len(safe_bricks)
 print(f"The answer to part 1 is: {p1_answer}")
 
-p2_answer = sum(find_supported_count(brick, {k}) for k, brick in bricks.items() if k not in safe_bricks)
+p2_answer = sum([find_supported_count(brick, {k}) for k, brick in bricks.items() if k not in safe_bricks])
 print(f"The answer to part 2 is: {p2_answer}")
