@@ -6,11 +6,11 @@ def process_p1(string):
     for char in string:
         if char.isdigit():
             digit_1 = char
-            break          
+            break
     for char in reversed(string):
         if char.isdigit():
             digit_2 = char
-            break   
+            break
     return int(digit_1 + digit_2)
 
 # Find the items from search items that have the lowest and highest idex value for the line.

@@ -21,21 +21,21 @@ def find_location_ranges(ranges, key):
     locationranges = []
     for range_ in ranges:
         start, end = range_
-        added = False   
+        added = False
         for set_ in maps[key]:
             dest, source, modifier = set_
             source_end = source + modifier
             if start >= source and end < source_end:
                 locationranges.append((start - source + dest, end - source + dest))
                 added = True
-            elif start < source_end <= end and source < start:
+            elif source < start < source_end <= end:
                 locationranges.append((start - source + dest, source_end - source + dest))
                 ranges.append((source_end, end))
                 added = True
             elif source >= start and source_end < end:
                 locationranges.append((dest, source_end - source + dest))
                 added = True
-            elif start < source <= end and source_end > end:
+            elif start < source <= end < source_end:
                 locationranges.append((dest, end - source + dest))
                 ranges.append((start, source-1))
                 added = True
