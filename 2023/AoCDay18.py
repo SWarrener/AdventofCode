@@ -1,5 +1,7 @@
+# https://adventofcode.com/2023/day/18
 from shapely.geometry import Polygon
 
+# Go through the list of instructions and create a list of coordinates from them.
 def CreateCoordinates(instructions):
     coords = [(0,0)]
     for instruction in instructions:
@@ -14,12 +16,14 @@ def CreateCoordinates(instructions):
             coords.append((current[0] - instruction[1], current[1]))
     return coords
 
+# Calculate the area* of the polygon to get the answer
 def ComputeArea(coords):
     pgon = Polygon(coords)
-    # We aren't looking for the area, but number of points including the boundaries.
+    # *We aren't looking for the area, but number of points including the boundaries.
     # So we need to use this formula instead of simply using the area
     return int(pgon.area + pgon.length/2 + 1)
 
+#Gets a list of tuples containing the direction, distance, and hex code for each instruction
 with open("input18.txt") as f:
     instructions = []
     for line in f.readlines():

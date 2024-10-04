@@ -1,3 +1,4 @@
+#https://adventofcode.com/2023/day/21
 import numpy as np
 
 # Basic pathfinding, starting from the middle and moving out, adding visited points to the

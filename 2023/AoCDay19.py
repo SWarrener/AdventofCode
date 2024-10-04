@@ -1,3 +1,4 @@
+# https://adventofcode.com/2023/day/19
 from math import prod
 
 # Go through each test in the calculation. If it is true, return the next step
@@ -72,6 +73,9 @@ def ProcessWorkflows(workflows):
                 possibilities.append((flow, bounds))
     return approved_possibilities
 
+# Extracts the parts as a list of tuples with the location of the part and then the scores for
+# that part as a dictionary. Gets the workflows as a dictionary with the name as the kye and a list
+# of checks as the value.
 with open("input19.txt") as f:
     workflows = {}
     parts = []
