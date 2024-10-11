@@ -1,7 +1,9 @@
 # https://adventofcode.com/2023/day/24
 
+from sympy import Symbol, solve_poly_system
+
 # Use the position and velocity data to calculate the y=mx+c form of the line the hailstone is taking
-def create_line_data(hailstone):
+def create_2d_line_data(hailstone):
     posx, posy, _ = hailstone["pos"]
     velx, vely, _ = hailstone["vel"]
     slope = vely/velx
@@ -40,6 +42,31 @@ def solve_p1(hailstones):
                         total += 1
     return total
 
+# https://old.reddit.com/r/adventofcode/comments/18pnycy/2023_day_24_solutions/kepmry2/
+# The maths for this part was a bit beyond me, so I am adapting the solution for part 2 detailed
+# in this comment.
+def solve_p2(hailstones):
+    x, y, z = Symbol('x'), Symbol('y'), Symbol('z')
+    vx, vy, vz = Symbol('vx'), Symbol('vy'), Symbol('vz')
+    equations, time_symbols = [], []
+    for idx, hailstone in enumerate(hailstones):
+        t = Symbol('t'+str(idx))
+        posx, posy, posz = hailstone["pos"]
+        velx, vely, velz = hailstone["vel"]
+        eqx = x + vx*t - posx - velx*t
+        eqy = y + vy*t - posy - vely*t
+        eqz = z + vz*t - posz - velz*t
+
+        time_symbols.append(t)
+        equations.append(eqx)
+        equations.append(eqy)
+        equations.append(eqz)
+
+    # Pass the equations and the variables through, get a list of tuples of the solutions
+    # out. I don't know how this function actually does that though.
+    answer = solve_poly_system(equations,*([x,y,z,vx,vy,vz]+time_symbols))
+    return answer[0][0] + answer[0][1] + answer[0][2]
+
 # Extract a list of dictionaries, where each dictionary contains a tuple of the start pos
 # and the velocity for each hailstone.
 with open("input24.txt") as f:
@@ -53,7 +80,10 @@ p1_min_xy_pos = 200000000000000
 p1_max_xy_pos = 400000000000000
 
 for stone in hailstones:
-    stone["p1_data"] = create_line_data(stone)
+    stone["p1_data"] = create_2d_line_data(stone)
 
 p1_answer = solve_p1(hailstones)
 print(f"The answer to part 1 is: {p1_answer}")
+
+p2_answer = solve_p2(hailstones[:3])
+print(f"The answer to part 2 is: {p2_answer}")
