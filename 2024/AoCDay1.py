@@ -13,6 +13,7 @@ def solve_part_2(list1: list, list2: list):
     for x in list1:
         yield x * list2.count(x)
 
+
 # Get the two lists of numbers
 with open("input1.txt") as f:
     list1, list2 = [], []
