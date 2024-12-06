@@ -17,25 +17,19 @@ def manipulate_grid(grid, func):
 # Take the grid, look for XMAS then rearrange so whichever line we are looking down becomes strings for easy searching
 # search for XMAS and then continue on
 def solve_p1(grid):
-    # Horizontal lines
-    total = count_xmas(grid, 0)
-
-    # Diagonals from top left (going down and then going right)
-    ngrid = manipulate_grid(grid, lambda l: [[l[i+j][i] for i in range(len(l)) if i+j < len(l)] for j in range(len(l))])
-    total = count_xmas(ngrid, total)
-    ngrid = manipulate_grid(grid, lambda l: [[l[i][i+j] for i in range(len(l)) if i+j < len(l)] for j in range(1,len(l))])
-    total = count_xmas(ngrid, total)
-
-    #Diagonals from top right (going left and then down)
-    ngrid = manipulate_grid(grid, lambda l: [[l[i][len(l)-1-j-i] for i in range(len(l)) if len(l)-1-j-i >= 0] for j in range(len(l))])
-    total = count_xmas(ngrid, total)
-    ngrid = manipulate_grid(grid, lambda l: [[l[i+j][len(l)-i-1] for i in range(len(l)) if len(l)-1-j >= 0 and i+j < len(l)] for j in range(1,len(l))])
-    total = count_xmas(ngrid, total)
-
-    # Vertical lines
-    ngrid = manipulate_grid(grid, lambda l: [[l[i][j] for i in range(len(l))] for j in range(len(l[0]))])
-    total = count_xmas(ngrid, total)
-
+    functions = [
+        lambda l: l, # Horizontal lines
+        lambda l: [[l[i+j][i] for i in range(len(l)) if i+j < len(l)] for j in range(len(l))], # Next 4 Diagonal lines
+        lambda l: [[l[i][i+j] for i in range(len(l)) if i+j < len(l)] for j in range(1,len(l))], # First 2 TL -> BR
+        lambda l: [[l[i][len(l)-1-j-i] for i in range(len(l)) if len(l)-1-j-i >= 0]
+                   for j in range(len(l))], # then next 2 TR -> BL
+        lambda l: [[l[i+j][len(l)-i-1] for i in range(len(l)) if len(l)-1-j >= 0 and i+j < len(l)]
+                   for j in range(1,len(l))],
+        lambda l: [[l[i][j] for i in range(len(l))] for j in range(len(l[0]))] # Vertical lines
+    ]
+    total = 0
+    for func in functions:
+        total = count_xmas(manipulate_grid(grid, func), total)
     return total
 
 # Look for every A in the grid not on the edge, if it has 2 "M"s and 2 "S"s in the correct places
