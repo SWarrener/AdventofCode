@@ -21,17 +21,24 @@ def find_antenna(grid):
     return antenna
 
 # Finds the antinodes by calculating the slope of the line between each antenna pair and
-# seeing if the "previous" and "next" locations are in the grid
-def find_antinodes(grid: list, antenna: dict):
+# finding the coords at the distances relevant to the part
+def find_antinodes(grid: list, antenna: dict, p2 = False):
     antinodes = set()
     for coords in antenna.values():
-        for pair in itertools.combinations(coords, 2):
-            a, b = pair
+        for a, b in itertools.combinations(coords, 2):
             ay, ax, by, bx = *a, *b
             dy, dx = (ay - by, ax - bx)
             for pos in ((ay+dy,ax+dx),(by-dy,bx-dx)):
                 if inbounds(grid, pos):
                     antinodes.add(pos)
+            if p2:
+                while inbounds(grid, (ay := ay + dy, ax := ax + dx)):
+                    antinodes.add((ay, ax))
+                while inbounds(grid, (by := by - dy, bx := bx - dx)):
+                    antinodes.add((by, bx))
+        if p2 and len(coords) > 1:
+            for coord in coords:
+                antinodes.add(coord)
 
     return len(antinodes)
 
@@ -45,3 +52,5 @@ antenna = find_antenna(grid)
 
 p1_answer = find_antinodes(grid, antenna)
 print(f"The answer to part 1 is {p1_answer}")
+p2_answer = find_antinodes(grid, antenna, True)
+print(f"The answer to part 2 is {p2_answer}")
