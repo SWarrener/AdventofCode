@@ -9,9 +9,12 @@ def create_fs(data):
 # of empty space
 def move_blocks(fs):
     counter = 0
-    while None in fs:
-        fs[fs.index(None)] = fs[counter := counter - 1]
-        fs[counter] = "E"
+    for i, char in enumerate(filesystem):
+        if char is None:
+            while fs[counter := counter - 1] is None:
+                fs[counter] = "E"
+            fs[i] = fs[counter]
+            fs[counter] = "E"
     return fs
 
 with open("input9.txt") as f:
