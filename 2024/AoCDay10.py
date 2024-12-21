@@ -1,12 +1,12 @@
 # https://adventofcode.com/2024/day/10
 
-
+# Check if coordinates are in bounds or not
 def inbounds(grid, coords):
     if 0 <= coords[0] < len(grid) and 0 <= coords[1] < len(grid[0]):
         return True
     return False
 
-
+# "Pathfinds" through the grid, moving to all valid tiles that can be reached
 def pathfind(grid, start, p1 = False):
     locations = [start]
     for height in range(1, 10):
@@ -21,7 +21,7 @@ def pathfind(grid, start, p1 = False):
         return(len(set(locations)))
     return len(locations)
 
-
+# Extracts a list of lists representing the grid
 with open("input10.txt") as f:
     grid = []
     for line in f.readlines():
