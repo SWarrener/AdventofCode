@@ -7,16 +7,18 @@ def inbounds(grid, coords):
     return False
 
 
-def pathfind(grid, start):
-    locations = {start}
+def pathfind(grid, start, p1 = False):
+    locations = [start]
     for height in range(1, 10):
-        new = set()
+        new = []
         for cy, cx in locations:
             for dy, dx in ((0,-1),(0,1),(1,0),(-1,0)):
                 ny, nx = cy + dy, cx + dx
                 if inbounds(grid, (ny,nx)) and grid[ny][nx] == height:
-                    new.add((ny,nx))
+                    new.append((ny,nx))
         locations = new
+    if p1:
+        return(len(set(locations)))
     return len(locations)
 
 
@@ -25,7 +27,7 @@ with open("input10.txt") as f:
     for line in f.readlines():
         grid.append(list(map(int,line.strip())))
 
-p1_answer = sum(pathfind(grid, (y,x)) for y, line in enumerate(grid) for x, char in enumerate(line) if char == 0)
+p1_answer = sum(pathfind(grid, (y,x), True) for y, line in enumerate(grid) for x, char in enumerate(line) if char == 0)
 print(f"The answer to part 1 is {p1_answer}")
-p2_answer = 2
+p2_answer = sum(pathfind(grid, (y,x)) for y, line in enumerate(grid) for x, char in enumerate(line) if char == 0)
 print(f"The answer to part 2 is {p2_answer}")
