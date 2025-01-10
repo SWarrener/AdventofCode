@@ -44,27 +44,37 @@ def create_p2_grid(grid):
         new.append(newl)
     return new
 
+# Moves the boxes for part 2
+def p2_move_boxes(grid, boxes: dict, dy = 0, dx = 0):
+    new_boxes = {(k[0]+dy,k[1]+dx): v for k,v in boxes.items()}
+    for y, x in boxes:
+        grid[y][x] = "."
+    for coords, char in new_boxes.items():
+        y, x = coords
+        grid[y][x] = char
+
 # Deals with vertical moves for part 2. If the robot moves into a box, keeping looking
 # in the direction of travel until we find out if the box can or can't be moved. Only then
 # actually move the box
 def check_vertical(ry, rx, dy, grid):
     old_boxes = {}
     box_map = {"]": (-1,"["), "[": (1,"]")}
-    cy, cx = ry+dy, rx
-    char = grid[cy][cx]
+    cy = ry+dy
+    char = grid[cy][rx]
     if char == "#":
         return ry, rx
     if char == ".":
-        return cy, cx
-    old_boxes[cy,cx] = char
+        return cy, rx
+    old_boxes[cy,rx] = char
     bx, bc = box_map[char]
-    old_boxes[cy,cx+bx] = bc
+    old_boxes[cy,rx+bx] = bc
     frontier = {(y+dy,x): grid[y+dy][x] for y,x in old_boxes}
     while True:
         if "#" in frontier.values():
             return ry, rx
         if all(x == "." for x in frontier.values()):
-            break
+            p2_move_boxes(grid, old_boxes, dy=dy)
+            return cy, rx
         frontier = dict(sorted(frontier.items(), key=lambda i: i[0][1]))
         frontier_list = list(frontier)
         y, x = frontier_list[0]
@@ -80,13 +90,6 @@ def check_vertical(ry, rx, dy, grid):
                 old_boxes[y,x] = char
                 new_frontier[y+dy,x] = grid[y+dy][x]
         frontier = new_frontier
-    new_boxes = {(k[0]+dy,k[1]): v for k,v in old_boxes.items()}
-    for y, x in old_boxes:
-        grid[y][x] = "."
-    for coords, char in new_boxes.items():
-        y, x = coords
-        grid[y][x] = char
-    return cy, cx
 
 # Deals with any horizontal moves for part 2, similar idea to part 1 except
 # an extra step to keep the boxes paired together
@@ -107,12 +110,7 @@ def check_horizontal(ry, rx, dx, grid):
             elif char == "]":
                 old_boxes[cy,cx-1] = "["
         if char == ".":
-            new_boxes = {(k[0],k[1]+dx): v for k,v in old_boxes.items()}
-            for y, x in old_boxes:
-                grid[y][x] = "."
-            for coords, char in new_boxes.items():
-                y, x = coords
-                grid[y][x] = char
+            p2_move_boxes(grid, old_boxes, dx=dx)
             return ry,rx+dx
 
 # Move the robot around for part 2
@@ -130,12 +128,8 @@ def move_robot_p2(moves, grid):
 
 # Calculate the score for the grid
 def calc_score(grid, target):
-    score = 0
-    for y, line in enumerate(grid):
-        for x, char in enumerate(line):
-            if char == target:
-                score += 100*y + x
-    return score
+    return sum(100*y+x for y, line in enumerate(grid) for x, char in enumerate(line)
+               if char == target)
 
 # Extracts a string with the list of moves and a list of lists representing the grid
 with open("input15.txt") as f:
