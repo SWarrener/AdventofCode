@@ -1,27 +1,27 @@
-with open("Downloads/input.txt") as f:
-	highest1 = 0
-	highest2 = 0
-	highest3 = 0
-	current = 0
-	lines = f.readlines()
-	for line in lines:
-		if line != '\n':
-			current = current + int(line)
-			print("current = ", current)
-		elif line == '\n' or '':
-			if current > highest1:
-				highest3 = highest2
-				highest2 = highest1
-				highest1 = current
-				print("highest1 = ", current)
-			elif current > highest2:
-				highest3 = highest2
-				highest2 = current
-				print("highest2 = ", current)
-			elif current > highest3:
-				highest3 = current
-				print("highest3 = ", current)
-			current = 0
-	print(highest1, highest2, highest3)
-	print(highest1+highest2+highest3)
-		
+# https://adventofcode.com/2022/day/1
+
+# Finds the three highest items in the list and returns their sum
+def top_three(elves: list):
+    total = 0
+    for _ in range(3):
+        temp = max(elves)
+        del elves[elves.index(temp)]
+        total += temp
+    return total
+
+# Gets a list of ints of the total calories for each elf
+with open("input1.txt") as f:
+    elves = []
+    total = 0
+    for line in f.readlines():
+        if line == "\n":
+            elves.append(total)
+            total = 0
+        else:
+            total += int(line.strip())
+
+p1_answer = max(elves)
+print(f"The answer to part 1 is {p1_answer}")
+
+p2_answer = top_three(elves)
+print(f"The answer to part 2 is {p2_answer}")
