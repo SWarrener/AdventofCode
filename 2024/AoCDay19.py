@@ -8,7 +8,7 @@ def check_design(towels, design: str):
         return True
     for pattern in towels:
         if design.startswith(pattern):
-            if check_design(towels, design[len(pattern):]):
+            if check_design(towels, design.removeprefix(pattern)):
                 return True
     return False
 
