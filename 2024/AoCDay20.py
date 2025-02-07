@@ -45,17 +45,11 @@ def find_cheats(grid: dict, target):
 # cheat. This would work for p1 as well but is a lot slower than the above solution
 def solve_p2(grid: dict, target, distance):
     count = 0
-    for k, v in grid.items():
-        cx, cy = k
-        if v == "#":
-            continue
-        for k2, v2 in grid.items():
-            if v2 == "#":
-                continue
-            nx, ny = k2
+    for cx, cy in grid:
+        for nx, ny in grid:
             man_distance = abs(cx-nx) + abs(cy-ny)
             if man_distance <= distance:
-                if grid[k] - grid[k2] + man_distance <= -target:
+                if grid[(cx,cy)] - grid[(nx,ny)] + man_distance <= target:
                     count += 1
     return count
 
@@ -69,5 +63,8 @@ num_grid = pathfind(start, end, grid.copy())
 
 p1_answer = find_cheats(num_grid, 100)
 print(f"The answer to part 1 is {p1_answer}")
-p2_answer = solve_p2(num_grid, 100, 20)
+
+num_grid = {k:v for k, v in num_grid.items() if v != "#"}
+
+p2_answer = solve_p2(num_grid, -100, 20)
 print(f"The answer to part 2 is {p2_answer}")
