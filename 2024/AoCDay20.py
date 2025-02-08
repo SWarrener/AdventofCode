@@ -1,15 +1,12 @@
 # https://adventofcode.com/2024/day/20
 
-def find_start_end_length(grid):
-    count = 0
+def find_start_end(grid):
     for k, v in grid.items():
         if v == "S":
             start = k
         elif v == "E":
             end = k
-        elif v == ".":
-            count += 1
-    return start, end, count + 1
+    return start, end
 
 # Do some basic pathfinding and change the numbers in the grid to enable the part 1 solution
 def pathfind(start, end, p1_grid):
@@ -46,18 +43,20 @@ def find_cheats(grid: dict, target):
 def solve_p2(grid: dict, target, distance):
     count = 0
     for cx, cy in grid:
-        for nx, ny in grid:
-            man_distance = abs(cx-nx) + abs(cy-ny)
-            if man_distance <= distance:
-                if grid[(cx,cy)] - grid[(nx,ny)] + man_distance <= target:
-                    count += 1
+        for dx, dy in ((x,y) for x in range(-distance, distance + 1) for y in range(-distance, distance + 1)):
+            nx, ny = cx+dx, cy+dy
+            if (nx, ny) in grid:
+                man_distance = abs(cx-nx) + abs(cy-ny)
+                if man_distance <= distance:
+                    if grid[(cx,cy)] - grid[(nx,ny)] + man_distance <= target:
+                        count += 1
     return count
 
 # gets a dictionary representing the grid
 with open("input20.txt") as f:
     grid = {(i,j): char for i, line in enumerate(f.readlines()) for j, char in enumerate(line.strip())}
 
-start, end, base_length = find_start_end_length(grid)
+start, end = find_start_end(grid)
 
 num_grid = pathfind(start, end, grid.copy())
 
