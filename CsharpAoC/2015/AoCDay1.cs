@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+// https://adventofcode.com/2015/day/1
 
 namespace CsharpAoC.Year2015.Day1;
 
