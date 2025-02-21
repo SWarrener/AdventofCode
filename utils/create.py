@@ -36,8 +36,8 @@ public class Solution: ISolver {{
         return ""+1;
     }}
 
-    public string Part1(string[] input) {{
-        return ""+1;
+    public string Part2(string[] input) {{
+        return ""+2;
     }}
 }}
 '''
