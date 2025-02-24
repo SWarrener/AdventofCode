@@ -4,12 +4,12 @@ namespace CsharpAoC.Year2015.Day5;
 
 public class Solution: ISolver {
     public string Part1(string[] input) {
-        int total = input.Select(x => IsNiceOne(x)).Sum();
+        int total = input.Select(IsNiceOne).Sum();
         return ""+total;
     }
 
     public string Part2(string[] input) {
-        int total = input.Select(x => IsNiceTwo(x)).Sum();
+        int total = input.Select(IsNiceTwo).Sum();
         return ""+total;
     }
 
@@ -17,6 +17,7 @@ public class Solution: ISolver {
     private static int IsNiceOne(string str) {
         int vowel_count = 0;
         char[] vowels = ['a','e','i','o','u'];
+        
         foreach (char character in str) {
             if (vowels.Contains(character)) {
                 vowel_count++;
@@ -25,12 +26,14 @@ public class Solution: ISolver {
         if (vowel_count < 3) {
             return 0;
         }
+
         string[] forbidden = ["ab", "cd", "pq", "xy"];
         foreach (var compare in forbidden) {
             if (str.Contains(compare)) {
                 return 0;
             }
         }
+
         for (int i = 0; i < str.Length-1; i++) {
             if (str[i] == str[i+1]) {
                 return 1;
