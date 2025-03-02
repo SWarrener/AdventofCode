@@ -29,3 +29,19 @@ static void RunDay(int day, int year, bool test = true) {
 }
 
 RunDay(day, year, test);
+
+static class Helper {
+
+    public static int CountSubstring(this string text, string value)
+    {                  
+        int count = 0, minIndex = text.IndexOf(value, 0);
+        while (minIndex != -1)
+        {
+            minIndex = text.IndexOf(value, minIndex + value.Length);
+            count++;
+        }
+        return count;
+    }
+
+}
+
