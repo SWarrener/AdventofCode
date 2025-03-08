@@ -1,5 +1,4 @@
 // https://adventofcode.com/2015/day/6
-using System.Numerics;
 using System.Text.RegularExpressions;
 
 namespace CsharpAoC.Year2015.Day6;

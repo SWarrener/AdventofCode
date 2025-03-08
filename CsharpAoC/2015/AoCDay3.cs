@@ -1,7 +1,5 @@
 // https://adventofcode.com/2015/day/3
 
-using Microsoft.VisualBasic;
-
 namespace CsharpAoC.Year2015.Day3;
 
 public class Solution: ISolver {
