@@ -29,7 +29,7 @@ public class Solution: ISolver {
         return "ERROR";
     }
 
-    //Increment the password, recursively going backwards through the letter in the string if we must
+    //Increment the password, recursively going backwards through the letters in the string if we must
     private string IncrementString(string s) {
         char final = s[^1];
         if (final == 'z') {
@@ -57,7 +57,7 @@ public class Solution: ISolver {
         return false;
     }
 
-    //Check to see if there are two valid pairs.
+    //Check to see if there are two valid pairs
     private bool ValidPairs(string s) {
         int pairs = 0;
         for (int i = 0; i < s.Length - 1; i++) {
